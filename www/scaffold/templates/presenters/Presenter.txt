@@ -1,0 +1,96 @@
+<?php
+namespace App\Presenters;
+
+use Nette, App\Model;
+
+class [scaffold-entityName]Presenter extends BasePresenter{
+
+    private $database;
+
+    public function __construct(Nette\Database\Context $database) {
+
+	$this->database = $database;
+
+    }
+
+    public function createComponentForm(){
+
+	$form = new Nette\Application\UI\Form;
+	[scaffold-entityForm]
+	$form->addSubmit('save');
+	return $form;
+    }
+
+    public function onSubmitAdd($form){
+
+	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
+	$values = $form->getValues();
+	foreach($values as $key => $value){
+	    $[scaffold-entityName]->$key = $value;
+	}
+	$[scaffold-entityName]->save();
+	$this->flashMessage('[scaffold-entityName] byl přidán.','success');
+	$this->redirect('view',array('id' => $[scaffold-entityName]->id));
+    }
+
+    public function onSubmitEdit($form){
+
+	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database,$this->getParam('id'));
+	$values = $form->getValues();
+	foreach($values as $key => $value){
+	    $[scaffold-entityName]->$key = $value;
+	}
+	$[scaffold-entityName]->save();
+	$this->flashMessage('[scaffold-entityName] byl upraven.','success');
+	$this->redirect('view',array('id' => $[scaffold-entityName]->id));
+    }
+
+    public function actionDelete($id){
+
+	try{
+	    $[scaffold-entityName] = new Model\[scaffold-entityName]($this->database,$id);
+	} catch(ModelException $e){
+	    $this->flashMessage("[scaffold-entityName] s id $id nebyl nalezen.",'error');
+	    $this->redirect('default');
+	}
+	$[scaffold-entityName]->delete();
+	$this->flashMessage('[scaffold-entityName] byl smazán.','success');
+	$this->redirect('default');
+    }
+
+    public function actionAdd(){
+
+	$form = $this->getComponent('form');
+	$form->onSubmit[] = callback($this, 'onSubmitAdd');
+    }
+
+    public function actionEdit($id){
+
+	try{
+	    $[scaffold-entityName] = new Model\[scaffold-entityName]($this->database,$id);
+	} catch(ModelException $e){
+	    $this->flashMessage("[scaffold-entityName] s id $id nebyl nalezen.",'error');
+	    $this->redirect('default');
+	}
+	$form = $this->getComponent('form');
+	$form->setDefaults(array(
+	    [scaffold-entityDefaults]
+	));
+	$form->onSubmit[] = callback($this, 'onSubmitEdit');
+    }
+
+    public function renderView($id){
+
+	$item = $this->database->table('[scaffold-entityName]')->get($id);
+	if (!$item) {
+	    $this->error('Stránka nebyla nalezena');
+	};
+	$this->template->item = $item;
+    }
+    
+    public function renderDefault(){
+    
+	$this->template->items = $this->database->table('[scaffold-entityName]');
+    }
+}
+?>

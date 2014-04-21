@@ -1,27 +1,27 @@
-<?php //netteCache[01]000384a:2:{s:4:"time";s:21:"0.47936900 1398112870";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:70:"C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Car\view.latte";i:2;i:1398112832;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:22:"released on 2014-03-17";}}}?><?php
+<?php //netteCache[01]000384a:2:{s:4:"time";s:21:"0.61614100 1398113268";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:70:"C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Pes\view.latte";i:2;i:1398113239;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:22:"released on 2014-03-17";}}}?><?php
 
-// source file: C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Car\view.latte
+// source file: C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Pes\view.latte
 
 ?><?php
 // prolog Nette\Latte\Macros\CoreMacros
-list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '9ef0orb4eg')
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '23afslmrks')
 ;
 // prolog Nette\Latte\Macros\UIMacros
 //
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lbfa968dcd5b_content')) { function _lbfa968dcd5b_content($_l, $_args) { foreach ($_args as $__k => $__v) $$__k = $__v
-?><p><a href="<?php echo htmlSpecialChars($_control->link("Car:default")) ?>">← zpět na výpis příspěvků</a></p>
+if (!function_exists($_l->blocks['content'][] = '_lb56972045cb_content')) { function _lb56972045cb_content($_l, $_args) { foreach ($_args as $__k => $__v) $$__k = $__v
+?><p><a href="<?php echo htmlSpecialChars($_control->link("Pes:default")) ?>">← zpět na výpis příspěvků</a></p>
 
 <h2>Detail záznamu</h2>
 
 <table>
     <tr>
        <td>
-          Company
+          Name
        </td>
        <td>
-          <?php echo Nette\Templating\Helpers::escapeHtml($item->company, ENT_NOQUOTES) ?>
+          <?php echo Nette\Templating\Helpers::escapeHtml($item->name, ENT_NOQUOTES) ?>
 
        </td>
     </tr>
@@ -36,10 +36,10 @@ if (!function_exists($_l->blocks['content'][] = '_lbfa968dcd5b_content')) { func
     </tr>
     <tr>
        <td>
-          Engine
+          Company
        </td>
        <td>
-          <?php echo Nette\Templating\Helpers::escapeHtml($item->engine, ENT_NOQUOTES) ?>
+          <?php echo Nette\Templating\Helpers::escapeHtml($item->company, ENT_NOQUOTES) ?>
 
        </td>
     </tr>

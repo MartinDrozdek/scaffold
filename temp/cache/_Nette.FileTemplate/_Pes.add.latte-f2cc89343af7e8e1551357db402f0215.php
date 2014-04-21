@@ -1,16 +1,16 @@
-<?php //netteCache[01]000383a:2:{s:4:"time";s:21:"0.36479000 1398112860";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:69:"C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Car\add.latte";i:2;i:1398112832;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:22:"released on 2014-03-17";}}}?><?php
+<?php //netteCache[01]000383a:2:{s:4:"time";s:21:"0.54633600 1398113254";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:69:"C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Pes\add.latte";i:2;i:1398113239;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:22:"released on 2014-03-17";}}}?><?php
 
-// source file: C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Car\add.latte
+// source file: C:\webserver\apache\htdocs\bc2\nette-blog\app\templates\Pes\add.latte
 
 ?><?php
 // prolog Nette\Latte\Macros\CoreMacros
-list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'v75iylcgdv')
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'bm9yjy2cjv')
 ;
 // prolog Nette\Latte\Macros\UIMacros
 //
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lb5c9e8db25d_content')) { function _lb5c9e8db25d_content($_l, $_args) { foreach ($_args as $__k => $__v) $$__k = $__v
+if (!function_exists($_l->blocks['content'][] = '_lb64912624ee_content')) { function _lb64912624ee_content($_l, $_args) { foreach ($_args as $__k => $__v) $$__k = $__v
 ?><h2>Vložte nový příspěvek</h2>
 
 <?php $_ctrl = $_control->getComponent("form"); if ($_ctrl instanceof Nette\Application\UI\IRenderable) $_ctrl->redrawControl(NULL, FALSE); $_ctrl->render() ;
