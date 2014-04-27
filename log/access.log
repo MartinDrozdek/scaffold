@@ -1,2 +1,0 @@
-[2014-03-26 23-29-43] HTTP code 404: Page not found. Missing template '…\apache\htdocs\bc2\nette-blog\app\templates\Homepage\default.latte'. in C:\webserver\apache\htdocs\bc2\nette-blog\vendor\nette\nette\Nette\Application\UI\Presenter.php:687  @  http://localhost/BC2/nette-blog/www/
-[2014-03-26 23-30-29] HTTP code 404: Page not found. Missing template '…\apache\htdocs\bc2\nette-blog\app\templates\Homepage\default.latte'. in C:\webserver\apache\htdocs\bc2\nette-blog\vendor\nette\nette\Nette\Application\UI\Presenter.php:687  @  http://localhost/BC2/nette-blog/www/

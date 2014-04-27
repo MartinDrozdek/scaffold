@@ -1,2 +1,0 @@
-[2014-04-21 01-44-11] Nette\DI\MissingServiceException: Service of type App\Model\Car not found. in C:\webserver\apache\htdocs\bc2\nette-blog\vendor\nette\nette\Nette\DI\Container.php:180  @  CLI: index.php  @@  exception-2014-04-21-01-44-11-e775ea2fd32dba29d92d270a5b3f8c24.html
-[2014-04-21 01-45-35] Nette\DI\MissingServiceException: Service of type App\Model\Car not found. in C:\webserver\apache\htdocs\bc2\nette-blog\vendor\nette\nette\Nette\DI\Container.php:180  @  CLI: index.php  @@  exception-2014-04-21-01-44-11-e775ea2fd32dba29d92d270a5b3f8c24.html

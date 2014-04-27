@@ -1,0 +1,36 @@
+<?php
+namespace App\Model;
+
+use Nette;
+
+class [scaffold-entityName] extends Nette\Object{
+    
+    private $db;
+    
+    public function __construct(Nette\Database\Context $database) {
+	$this->db = $database;
+    }
+
+    public function find($id) {	
+	$result = $this->db->fetch('SELECT [scaffold-entityAtributesComma] FROM `[scaffold-entityName]` WHERE `id` = ?', $id);
+	if ($result == FALSE) {
+	    throw new ModelException("[scaffold-entityName] s id $id neexistuje.");
+	} else {
+	    return $result;
+	}
+    }
+
+    public function save($id,$values) {
+	if ($id == NULL) {
+	    $this->db->query('INSERT INTO `[scaffold-entityName]`', $values);
+	    return $this->db->getInsertId();
+	} else {
+	    return $this->db->query('UPDATE `[scaffold-entityName]` SET ? WHERE id = ?', $values, $id);
+	}
+    }
+
+    public function delete($id) {
+	return $this->db->query('DELETE FROM `[scaffold-entityName]` WHERE `id`=?', $id);
+    }
+}
+?>
