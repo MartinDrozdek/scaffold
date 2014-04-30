@@ -1,0 +1,1 @@
+addCheckbox('[scaffold-name]', '[scaffold-caption]')

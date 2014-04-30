@@ -1,0 +1,13 @@
+<?php
+
+namespace App\[scaffold-namespace]\Presenters;
+
+use Nette, App\Model;
+
+class ListPresenter extends Base[scaffold-entityName]Presenter{
+
+    public function renderList(){    
+	$this->template->items = $this->database->table('[scaffold-entityName]');
+    }
+}
+?>

@@ -1,0 +1,1 @@
+addText('[scaffold-name]', '[scaffold-caption]')->addRule(Form::FLOAT,'Zadaná hodnota musí být číselná')->addRule(Form::MAX_LENGHT,'Délka může být maximálně [scaffold-maxlenght] číslic',[scaffold-maxlenght])

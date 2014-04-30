@@ -1,0 +1,9 @@
+<?php
+namespace App\[scaffold-namespace]\Presenters;
+
+use Nette, App\Model;
+
+class BasePresenter extends \App\[scaffold-previousModule]Presenters\BasePresenter{
+
+}
+?>

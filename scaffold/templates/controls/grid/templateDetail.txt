@@ -1,0 +1,3 @@
+<table>
+    [scaffold-detailItems]
+</table>

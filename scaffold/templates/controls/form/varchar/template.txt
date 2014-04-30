@@ -1,0 +1,1 @@
+addText('[scaffold-name]', '[scaffold-caption]')->addRule(Form::MAX_LENGHT,'Délka může být maximálně [scaffold-maxlenght] znaků',[scaffold-maxlenght])

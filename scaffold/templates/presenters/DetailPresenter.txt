@@ -1,0 +1,17 @@
+<?php
+
+namespace App\[scaffold-namespace]\Presenters;
+
+use Nette, App\Model;
+
+class DetailPresenter extends Base[scaffold-entityName]Presenter{
+
+    public function renderDetail($id){
+	$item = $this->database->table('[scaffold-entityName]')->get($id);
+	if (!$item) {
+	    $this->error('Stránka nebyla nalezena');
+	};
+	$this->template->item = $item;
+    }
+}
+?>

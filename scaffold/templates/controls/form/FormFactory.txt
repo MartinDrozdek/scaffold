@@ -1,0 +1,16 @@
+<?php
+
+namespace App\[scaffold-namespace];
+
+use Nette\Application\UI;
+
+class [scaffold-entityName]FormFactory extends \Nette\Object{
+    
+    public function create(){
+        $form = new UI\Form;
+        [scaffold-entityFields]        
+        return $form;
+    }
+
+}
+?>

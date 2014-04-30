@@ -1,0 +1,1 @@
+addTextArea('[scaffold-name]', '[scaffold-caption]')

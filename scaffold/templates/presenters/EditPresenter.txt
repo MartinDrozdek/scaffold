@@ -1,0 +1,40 @@
+<?php
+
+namespace App\[scaffold-namespace]\Presenters;
+
+use Nette, App\Model;
+
+class EditPresenter extends Base[scaffold-entityName]Presenter{
+
+    /** @var \App\[scaffold-namespace]\[scaffold-entityName]FormFactory @inject */
+    public $[scaffold-entityName]FormFactory;
+
+    public function createComponentForm(){
+	$form = $this->[scaffold-entityName]FormFactory->create();
+	$form->addSubmit('Edit');
+	return $form;
+    }
+
+    public function onSubmitEdit($form){
+	$id = $this->getParam('id');
+	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
+	$values = $form->getValues();	
+	$[scaffold-entityName]->save($id,$values);
+	$this->flashMessage('[scaffold-entityName] byl upraven.','success');
+	$this->redirect('view',array('id' => $id));
+    }
+
+    public function actionEdit($id){
+	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
+	try{
+	    $values = $[scaffold-entityName]->find($id);    
+	} catch(ModelException $e){
+	    $this->flashMessage("[scaffold-entityName] s id $id nebyl nalezen.",'error');
+	    $this->redirect('default');
+	}
+	$form = $this->getComponent('[scaffold-entityName]Form');
+	$form->setDefaults($values);
+	$form->onSubmit[] = callback($this, 'onSubmitEdit');
+    }
+}
+?>

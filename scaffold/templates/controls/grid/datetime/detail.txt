@@ -1,0 +1,8 @@
+<tr>
+    <td>
+	[scaffold-name]
+    </td>
+    <td>
+	{$item->[scaffold-nameSmall]}
+    </td>	    
+ </tr>
