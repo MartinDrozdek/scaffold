@@ -5,7 +5,7 @@ use Nette, App\Model;
 
 class Base[scaffold-entityName]Presenter extends BasePresenter{
 
-    private $database;
+    protected $database;
 
     /** @persistent */
     public $[scaffold-entityName]Id;

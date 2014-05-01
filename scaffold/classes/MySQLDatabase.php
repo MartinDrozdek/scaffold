@@ -40,47 +40,14 @@ class MySQLDatabase {
     }
 
     private function generateColumn($param) {
-
-	switch (trim($param["type"])) {
-	    case "varchar": {
-		    $varcharGenerator = new VarcharTypeGenerator();
-		    $return = $varcharGenerator->generateMySQL($param);
-		    return $return;
-		}
-	    case "text": {
-		    $textGenerator = new TextTypeGenerator();
-		    $return = $textGenerator->generateMySQL($param);
-		    return $return;
-		}
-	    case "int": {
-		    $intGenerator = new IntTypeGenerator();
-		    $return = $intGenerator->generateMySQL($param);
-		    return $return;
-		}
-	    case "bool": {
-		    $boolGenerator = new BoolTypeGenerator();
-		    $return = $boolGenerator->generateMySQL($param);
-		    return $return;
-		}
-	    case "float": {
-		    $floatGenerator = new FloatTypeGenerator();
-		    $return = $floatGenerator->generateMySQL($param);
-		    return $return;
-		}
-	    case "date": {
-		    $dateGenerator = new DateTypeGenerator();
-		    $return = $dateGenerator->generateMySQL($param);
-		    return $return;
-		}
-	    case "datetime": {
-		    $datetimeGenerator = new DatetimeTypeGenerator();
-		    $return = $datetimeGenerator->generateMySQL($param);
-		    return $return;
-		}
-
-	    default:
-		echo "\n\t!!! Wrong type of column";
-		return "";
+	$class = ucfirst(trim($param["type"])) . "TypeGenerator";
+	if (class_exists($class)) {
+	    $generator = new $class();
+	    $return = $generator->generateMySQL($param);
+	    return $return;
+	} else {
+	    echo "\n\t!!! Wrong type of column";
+	    return "";
 	}
     }
 

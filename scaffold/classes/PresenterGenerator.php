@@ -34,10 +34,13 @@ class PresenterGenerator extends Generator {
 	$currentModule = $this->getCurrentModule($entity);
 	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
 	$modulePath = $this->getModulePath($module, $currentModule);
+	$modules = $this->getModules($module, $currentModule);
 
 	$template = $this->loadTemplate("templates/presenters/AddPresenter.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
 	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $modules);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityNameSmall]", strtolower($entity));
 
 	$this->write($template, "app/$modulePath/presenters/AddPresenter.php");
 	return TRUE;
@@ -47,10 +50,13 @@ class PresenterGenerator extends Generator {
 	$currentModule = $this->getCurrentModule($entity);
 	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
 	$modulePath = $this->getModulePath($module, $currentModule);
+	$modules = $this->getModules($module, $currentModule);
 
 	$template = $this->loadTemplate("templates/presenters/EditPresenter.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
 	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityNameSmall]", strtolower($entity));
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $modules);
 
 	$this->write($template, "app/$modulePath/presenters/EditPresenter.php");
 	return TRUE;

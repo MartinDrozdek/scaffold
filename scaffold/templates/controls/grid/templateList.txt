@@ -9,9 +9,9 @@
 	<tr>
 	    [scaffold-types]	
 	    <td>
-		<a href="{link [scaffold-entityName]:view $item->id}">View</a>
-		<a href="{link [scaffold-entityName]:edit $item->id}">Edit</a>
-		<a href="{link [scaffold-entityName]:delete $item->id}">Delete</a>
+		<a href="{link :[scaffold-Modules]:Detail:default $item->id}">View</a>
+		<a href="{link :[scaffold-Modules]:Edit:edit $item->id}">Edit</a>
+		<a href="{link :[scaffold-Modules]:Add:delete $item->id}">Delete</a>
 	    </td>
 
 	</tr>

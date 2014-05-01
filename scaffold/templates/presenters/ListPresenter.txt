@@ -6,7 +6,7 @@ use Nette, App\Model;
 
 class ListPresenter extends Base[scaffold-entityName]Presenter{
 
-    public function renderList(){    
+    public function renderDefault(){    
 	$this->template->items = $this->database->table('[scaffold-entityName]');
     }
 }

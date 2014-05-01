@@ -9,7 +9,7 @@ class AddPresenter extends Base[scaffold-entityName]Presenter{
     /** @var \App\[scaffold-namespace]\[scaffold-entityName]FormFactory @inject */
     public $[scaffold-entityName]FormFactory;
 
-    public function createComponentForm(){
+    public function createComponent[scaffold-entityName]Form(){
 	$form = $this->[scaffold-entityName]FormFactory->create();
 	$form->addSubmit('Add');
 	return $form;
@@ -20,11 +20,11 @@ class AddPresenter extends Base[scaffold-entityName]Presenter{
 	$values = $form->getValues();	
 	$id = $[scaffold-entityName]->save(NULL,$values);
 	$this->flashMessage('[scaffold-entityName] byl přidán.','success');
-	$this->redirect('detail',array('id' => $id));
+	$this->redirect(':[scaffold-Modules]:Detail:default',array('id' => $id));
     }
 
     public function actionAdd(){
-	$form = $this->getComponent('[scaffold-entityName]Form');
+	$form = $this->getComponent('[scaffold-entityNameSmall]Form');
 	$form->onSubmit[] = callback($this, 'onSubmitAdd');
     }
     
@@ -32,7 +32,7 @@ class AddPresenter extends Base[scaffold-entityName]Presenter{
 	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
 	$[scaffold-entityName]->delete($id);
 	$this->flashMessage('[scaffold-entityName] byl smazán.','success');
-	$this->redirect('list');
+	$this->redirect(':[scaffold-Modules]:List:');
     }
 }
 ?>

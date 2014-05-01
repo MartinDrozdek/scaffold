@@ -9,7 +9,7 @@ class EditPresenter extends Base[scaffold-entityName]Presenter{
     /** @var \App\[scaffold-namespace]\[scaffold-entityName]FormFactory @inject */
     public $[scaffold-entityName]FormFactory;
 
-    public function createComponentForm(){
+    public function createComponent[scaffold-entityName]Form(){
 	$form = $this->[scaffold-entityName]FormFactory->create();
 	$form->addSubmit('Edit');
 	return $form;
@@ -21,7 +21,7 @@ class EditPresenter extends Base[scaffold-entityName]Presenter{
 	$values = $form->getValues();	
 	$[scaffold-entityName]->save($id,$values);
 	$this->flashMessage('[scaffold-entityName] byl upraven.','success');
-	$this->redirect('view',array('id' => $id));
+	$this->redirect(':[scaffold-Modules]:Detail:default',array('id' => $id));
     }
 
     public function actionEdit($id){
@@ -32,7 +32,7 @@ class EditPresenter extends Base[scaffold-entityName]Presenter{
 	    $this->flashMessage("[scaffold-entityName] s id $id nebyl nalezen.",'error');
 	    $this->redirect('default');
 	}
-	$form = $this->getComponent('[scaffold-entityName]Form');
+	$form = $this->getComponent('[scaffold-entityNameSmall]Form');
 	$form->setDefaults($values);
 	$form->onSubmit[] = callback($this, 'onSubmitEdit');
     }

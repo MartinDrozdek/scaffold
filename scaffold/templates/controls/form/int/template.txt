@@ -1,1 +1,1 @@
-addText('[scaffold-name]', '[scaffold-caption]')->addRule(Form::INTEGER,'Zadaná hodnota musí být celočíselná')->addRule(Form::MAX_LENGHT,'Délka může být maximálně [scaffold-maxlenght] číslic',[scaffold-maxlenght])
+addText('[scaffold-name]', '[scaffold-caption]')->addRule(UI\Form::INTEGER,'Zadaná hodnota musí být celočíselná')->addRule(UI\Form::MAX_LENGTH,'Délka může být maximálně [scaffold-maxlenght] číslic',[scaffold-maxlenght])

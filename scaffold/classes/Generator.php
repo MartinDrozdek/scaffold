@@ -15,6 +15,13 @@ class Generator {
 	$moduleNamespace = ($previousModule == "") ? $currentModule : $previousModule . "\\" . $currentModule;
 	return $moduleNamespace;
     }
+    
+    protected function getModules($previousModule, $currentModule) {
+	$previousModule = $this->replaceTemplateString($previousModule, "/", ":");
+	$modules = ($previousModule == "") ? $currentModule : $previousModule . ":" . $currentModule;
+	$modules = $this->replaceTemplateString($modules, "Module", "");
+	return $modules;
+    }
 
     protected function getCurrentModule($entity) {
 	return $entity . "Module";
