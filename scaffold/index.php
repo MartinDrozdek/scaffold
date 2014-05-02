@@ -1,42 +1,59 @@
 <?php
 
-require 'classes/TypeGenerator.php';
 require 'classes/Generator.php';
 
 require 'classes/DBConnector.php';
 require 'classes/MySQLDatabase.php';
+
 require 'classes/ModuleGenerator.php';
 require 'classes/ModelGenerator.php';
 require 'classes/PresenterGenerator.php';
 require 'classes/TemplateGenerator.php';
 require 'classes/FormGenerator.php';
 
-require 'classes/BoolTypeGenerator.php';
-require 'classes/FloatTypeGenerator.php';
-require 'classes/DateTypeGenerator.php';
-require 'classes/DatetimeTypeGenerator.php';
-require 'classes/IntTypeGenerator.php';
-require 'classes/TextTypeGenerator.php';
-require 'classes/VarcharTypeGenerator.php';
+require 'classes/types/BoolGenerator.php';
+require 'classes/types/DateGenerator.php';
+require 'classes/types/DatetimeGenerator.php';
+require 'classes/types/FloatGenerator.php';
+require 'classes/types/IntGenerator.php';
+require 'classes/types/TextGenerator.php';
+require 'classes/types/VarcharGenerator.php';
 
 class Scaffold {
 
+    /**
+     * String - code form console
+     */
     private $code;
+
+    /**
+     * String - name of module where entity is generated - ex. CarModule
+     */
     private $module;
+
+    /**
+     * String - name of generated entity - ex. Car
+     */
     private $entity;
+
+    /**
+     * Two dimensional array  - array of generated entity atributes 
+     */
     private $params;
 
+    /**
+     * String - path to current module - ex. CarModule/CarModule2
+     */
+    private $pathModule;
+
+    /**
+     * 	Construct
+     */
     function __construct() {
-	$this->start();
-    }
-
-    private function start() {
 	$parameters = $this->readArgv();
-
 	if ($parameters[0] == "?") {
 	    $this->help();
 	}
-
 	if ($parameters[0] == "entity") {
 	    array_shift($parameters);
 
@@ -53,7 +70,6 @@ class Scaffold {
 	    $this->code = $parameters;
 	    $this->generate();
 	}
-
 	if ($parameters[0] == "regenerate") {
 	    array_shift($parameters);
 	    $what = array_shift($parameters);
@@ -74,6 +90,10 @@ class Scaffold {
 	}
     }
 
+    /**
+     * 	Regenerate element
+     * @param string $what element, which is regenerated - Model, Form, Presenters, Templates, Entity
+     */
     private function regenerate($what) {
 	$this->processCode();
 	$this->writeConsole(" ");
@@ -93,148 +113,27 @@ class Scaffold {
 		$pathModule = $this->module . "/" . $this->entity . "Module";
 	    }
 
-//	    $modulGenerator = new ModuleGenerator();
-//	    if ($modulGenerator->createModul($pathModule, $this->entity) == TRUE) {
-//		$this->writeConsole("\t Generate modul structure");
-//	    } else {
-//		$this->writeConsole("\t ! Can not generate modul structure");
-//		return;
-//	    }
-
 	    switch ($what) {
 		case "Model": {
-			$modelGenerator = new ModelGenerator();
-			if ($modelGenerator->createModel($this->entity, $this->params) == TRUE) {
-			    $this->writeConsole("\t Generate model in /app/model/$this->entity.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate model in /app/model/$this->entity.php");
-			    return;
-			}
+			$this->generateModel();
 			break;
 		    }
 		case "Presenters": {
-			$presenterGenerator = new PresenterGenerator();
-			if ($presenterGenerator->createBasePresenter($this->module, $this->entity) == TRUE) {
-			    $this->writeConsole("\t Generate base presenter in /app/$pathModule/presenters/BasePresenter.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate base presenter in /app/$pathModule/presenters/BasePresenter.php");
-			    return;
-			}
-
-			if ($presenterGenerator->createBaseEntityPresenter($this->module, $this->entity) == TRUE) {
-			    $this->writeConsole("\t Generate base entity presenter in /app/$pathModule/presenters/Base{$this->entity}Presenter.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate base entity presenter in /app/$pathModule/presenters/Base{$this->entity}Presenter.php");
-			    return;
-			}
-
-			if ($presenterGenerator->createAddPresenter($this->module, $this->entity) == TRUE) {
-			    $this->writeConsole("\t Generate add presenter in /app/$pathModule/presenters/AddPresenter.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate add presenter in /app/$pathModule/presenters/AddPresenter.php");
-			    return;
-			}
-
-			if ($presenterGenerator->createEditPresenter($this->module, $this->entity) == TRUE) {
-			    $this->writeConsole("\t Generate edit presenter in /app/$pathModule/presenters/EditPresenter.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate edit presenter in /app/$pathModule/presenters/EditPresenter.php");
-			    return;
-			}
-
-			if ($presenterGenerator->createListPresenter($this->module, $this->entity) == TRUE) {
-			    $this->writeConsole("\t Generate list presenter in /app/$pathModule/presenters/ListPresenter.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate list presenter in /app/$pathModule/presenters/ListPresenter.php");
-			    return;
-			}
-
-			if ($presenterGenerator->createDetailPresenter($this->module, $this->entity) == TRUE) {
-			    $this->writeConsole("\t Generate detail presenter in /app/$pathModule/presenters/DetailPresenter.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate detail presenter in /app/$pathModule/presenters/DetailPresenter.php");
-			    return;
-			}
+			$this->generatePresenters();
 			break;
 		    }
 		case "Form": {
-			$formGenerator = new FormGenerator();
-			if ($formGenerator->create($this->module, $this->entity, $this->params) == TRUE) {
-			    $this->writeConsole("\t Generate form in /app/$pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate form in /app/$pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
-			    return;
-			}
+			$this->generateForm();
 			break;
 		    }
 		case "Templates": {
-			$templateGenerator = new TemplateGenerator();
-			if ($templateGenerator->createTemplateAdd($this->entity, $pathModule) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Add.add.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Add.add.latte");
-			    return;
-			}
-			if ($templateGenerator->createTemplateEdit($this->entity, $pathModule) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Edit.edit.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Edit.edit.latte");
-			    return;
-			}
-			if ($templateGenerator->createTemplateList($this->entity, $this->params, $this->module) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/List.default.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/List.default.latte");
-			    return;
-			}
-			if ($templateGenerator->createTemplateDetail($this->entity, $this->params, $this->module) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Detail.default.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Detail.default.latte");
-			    return;
-			}
+			$this->generateTemplates();
 			break;
 		    }
 		case "Entity": {
-			$modelGenerator = new ModelGenerator();
-			if ($modelGenerator->createModel($this->entity, $this->params) == TRUE) {
-			    $this->writeConsole("\t Generate model in /app/model/$this->entity.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate model in /app/model/$this->entity.php");
-			    return;
-			}
-			$formGenerator = new FormGenerator();
-			if ($formGenerator->create($this->module, $this->entity, $this->params) == TRUE) {
-			    $this->writeConsole("\t Generate form in /app/$pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
-			} else {
-			    $this->writeConsole("\t ! Can not generate form in /app/$pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
-			    return;
-			}
-			$templateGenerator = new TemplateGenerator();
-			if ($templateGenerator->createTemplateAdd($this->entity, $pathModule) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Add.add.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Add.add.latte");
-			    return;
-			}
-			if ($templateGenerator->createTemplateEdit($this->entity, $pathModule) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Edit.edit.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Edit.edit.latte");
-			    return;
-			}
-			if ($templateGenerator->createTemplateList($this->entity, $this->params, $this->module) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/List.default.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/List.default.latte");
-			    return;
-			}
-			if ($templateGenerator->createTemplateDetail($this->entity, $this->params, $this->module) == TRUE) {
-			    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Detail.default.latte");
-			} else {
-			    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Detail.default.latte");
-			    return;
-			}
+			$this->generateModel();
+			$this->generateForm();
+			$this->generateTemplates();
 			break;
 		    }
 		default:
@@ -244,110 +143,18 @@ class Scaffold {
 	}
     }
 
+    /**
+     * Main function to generate entity
+     */
     private function generate() {
 	$this->processCode();
 	$this->writeConsole(" ");
 
-	$pathModule = "";
-	if ($this->module == "") {
-	    $pathModule = $this->entity . "Module";
-	} else {
-	    $pathModule = $this->module . "/" . $this->entity . "Module";
-	}
-
-	$modulGenerator = new ModuleGenerator();
-	if ($modulGenerator->createModul($pathModule, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate modul structure");
-	} else {
-	    $this->writeConsole("\t ! Can not generate modul structure");
-	    return;
-	}
-
-
-	$modelGenerator = new ModelGenerator();
-	if ($modelGenerator->createModel($this->entity, $this->params) == TRUE) {
-	    $this->writeConsole("\t Generate model in /app/model/$this->entity.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate model in /app/model/$this->entity.php");
-	    return;
-	}
-
-	$presenterGenerator = new PresenterGenerator();
-	if ($presenterGenerator->createBasePresenter($this->module, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate base presenter in /app/$pathModule/presenters/BasePresenter.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate base presenter in /app/$pathModule/presenters/BasePresenter.php");
-	    return;
-	}
-
-	if ($presenterGenerator->createBaseEntityPresenter($this->module, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate base entity presenter in /app/$pathModule/presenters/Base{$this->entity}Presenter.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate base entity presenter in /app/$pathModule/presenters/Base{$this->entity}Presenter.php");
-	    return;
-	}
-
-	if ($presenterGenerator->createAddPresenter($this->module, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate add presenter in /app/$pathModule/presenters/AddPresenter.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate add presenter in /app/$pathModule/presenters/AddPresenter.php");
-	    return;
-	}
-
-	if ($presenterGenerator->createEditPresenter($this->module, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate edit presenter in /app/$pathModule/presenters/EditPresenter.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate edit presenter in /app/$pathModule/presenters/EditPresenter.php");
-	    return;
-	}
-
-	if ($presenterGenerator->createListPresenter($this->module, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate list presenter in /app/$pathModule/presenters/ListPresenter.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate list presenter in /app/$pathModule/presenters/ListPresenter.php");
-	    return;
-	}
-
-	if ($presenterGenerator->createDetailPresenter($this->module, $this->entity) == TRUE) {
-	    $this->writeConsole("\t Generate detail presenter in /app/$pathModule/presenters/DetailPresenter.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate detail presenter in /app/$pathModule/presenters/DetailPresenter.php");
-	    return;
-	}
-
-	$templateGenerator = new TemplateGenerator();
-	if ($templateGenerator->createTemplateAdd($this->entity, $pathModule) == TRUE) {
-	    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Add.add.latte");
-	} else {
-	    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Add.add.latte");
-	    return;
-	}
-	if ($templateGenerator->createTemplateEdit($this->entity, $pathModule) == TRUE) {
-	    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Edit.edit.latte");
-	} else {
-	    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Edit.edit.latte");
-	    return;
-	}
-	if ($templateGenerator->createTemplateList($this->entity, $this->params, $this->module) == TRUE) {
-	    $this->writeConsole("\t Generate template in /app/$pathModule/templates/List.default.latte");
-	} else {
-	    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/List.default.latte");
-	    return;
-	}
-	if ($templateGenerator->createTemplateDetail($this->entity, $this->params, $this->module) == TRUE) {
-	    $this->writeConsole("\t Generate template in /app/$pathModule/templates/Detail.default.latte");
-	} else {
-	    $this->writeConsole("\t ! Can not generate template in /app/$pathModule/templates/Detail.default.latte");
-	    return;
-	}
-
-	$formGenerator = new FormGenerator();
-	if ($formGenerator->create($this->module, $this->entity, $this->params) == TRUE) {
-	    $this->writeConsole("\t Generate form in /app/$pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
-	} else {
-	    $this->writeConsole("\t ! Can not generate form in /app/$pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
-	    return;
-	}
+	$this->generateModule();
+	$this->generateModel();
+	$this->generatePresenters();
+	$this->generateTemplates();
+	$this->generateForm();
 
 	$dbConnector = new DBConnector();
 	$pdo = $dbConnector->connect();
@@ -356,13 +163,134 @@ class Scaffold {
 	    $this->writeConsole("\t ! Cannot connect to DB");
 	} else {
 	    $database = new MySqlDatabase($pdo);
-
 	    if ($database->generateEntity($this->entity, $this->params) == TRUE) {
 		$this->writeConsole("\t Generate entity: $this->entity");
 	    }
 	}
     }
 
+    /**
+     * Generate Module
+     */
+    private function generateModule() {
+	$modulGenerator = new ModuleGenerator();
+	if ($modulGenerator->create($this->pathModule, $this->entity) == TRUE) {
+	    $this->writeConsole("\t Generate modul structure");
+	} else {
+	    $this->writeConsole("\t ! Can not generate modul structure");
+	    return;
+	}
+    }
+
+    /**
+     * Generate Model
+     */
+    private function generateModel() {
+	$modelGenerator = new ModelGenerator();
+	if ($modelGenerator->create($this->entity, $this->params) == TRUE) {
+	    $this->writeConsole("\t Generate model in /app/model/$this->entity.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate model in /app/model/$this->entity.php");
+	    return;
+	}
+    }
+
+    /**
+     * Generate Presenters
+     */
+    private function generatePresenters() {
+	$presenterGenerator = new PresenterGenerator();
+	if ($presenterGenerator->create($this->module, $this->entity, "Base") == TRUE) {
+	    $this->writeConsole("\t Generate base presenter in /app/$this->pathModule/presenters/BasePresenter.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate base presenter in /app/$this->pathModule/presenters/BasePresenter.php");
+	    return;
+	}
+
+	if ($presenterGenerator->create($this->module, $this->entity, "BaseEntity") == TRUE) {
+	    $this->writeConsole("\t Generate base entity presenter in /app/$this->pathModule/presenters/Base{$this->entity}Presenter.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate base entity presenter in /app/$pathModule/presenters/Base{$this->entity}Presenter.php");
+	    return;
+	}
+
+	if ($presenterGenerator->create($this->module, $this->entity, "Add") == TRUE) {
+	    $this->writeConsole("\t Generate add presenter in /app/$this->pathModule/presenters/AddPresenter.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate add presenter in /app/$this->pathModule/presenters/AddPresenter.php");
+	    return;
+	}
+
+	if ($presenterGenerator->create($this->module, $this->entity, "Edit") == TRUE) {
+	    $this->writeConsole("\t Generate edit presenter in /app/$this->pathModule/presenters/EditPresenter.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate edit presenter in /app/$this->pathModule/presenters/EditPresenter.php");
+	    return;
+	}
+
+	if ($presenterGenerator->create($this->module, $this->entity, "List") == TRUE) {
+	    $this->writeConsole("\t Generate list presenter in /app/$this->pathModule/presenters/ListPresenter.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate list presenter in /app/$this->pathModule/presenters/ListPresenter.php");
+	    return;
+	}
+
+	if ($presenterGenerator->create($this->module, $this->entity, "Detail") == TRUE) {
+	    $this->writeConsole("\t Generate detail presenter in /app/$this->pathModule/presenters/DetailPresenter.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate detail presenter in /app/$this->pathModule/presenters/DetailPresenter.php");
+	    return;
+	}
+    }
+
+    /**
+     * Generate Templates
+     */
+    private function generateTemplates() {
+	$templateGenerator = new TemplateGenerator();
+	if ($templateGenerator->create($this->module, $this->entity, $this->params, "Add") == TRUE) {
+	    $this->writeConsole("\t Generate template in /app/$this->pathModule/templates/Add.add.latte");
+	} else {
+	    $this->writeConsole("\t ! Can not generate template in /app/$this->pathModule/templates/Add.add.latte");
+	    return;
+	}
+	if ($templateGenerator->create($this->module, $this->entity, $this->params, "Edit") == TRUE) {
+	    $this->writeConsole("\t Generate template in /app/$this->pathModule/templates/Edit.edit.latte");
+	} else {
+	    $this->writeConsole("\t ! Can not generate template in /app/$this->pathModule/templates/Edit.edit.latte");
+	    return;
+	}
+	if ($templateGenerator->create($this->module, $this->entity, $this->params, "List") == TRUE) {
+	    $this->writeConsole("\t Generate template in /app/$this->pathModule/templates/List.default.latte");
+	} else {
+	    $this->writeConsole("\t ! Can not generate template in /app/$this->pathModule/templates/List.default.latte");
+	    return;
+	}
+	if ($templateGenerator->create($this->module, $this->entity, $this->params, "Detail") == TRUE) {
+	    $this->writeConsole("\t Generate template in /app/$this->pathModule/templates/Detail.default.latte");
+	} else {
+	    $this->writeConsole("\t ! Can not generate template in /app/$this->pathModule/templates/Detail.default.latte");
+	    return;
+	}
+    }
+
+    /**
+     * Generate Form
+     */
+    private function generateForm() {
+	$formGenerator = new FormGenerator();
+	if ($formGenerator->create($this->module, $this->entity, $this->params) == TRUE) {
+	    $this->writeConsole("\t Generate form in /app/$this->pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
+	} else {
+	    $this->writeConsole("\t ! Can not generate form in /app/$this->pathModule/controls/{$this->entity}Form/{$this->entity}FormFactory.php");
+	    return;
+	}
+    }
+
+    /**
+     * Load params from Mysql     
+     * @param instance of PDO $pdo 
+     */
     private function loadParamsMysql($pdo) {
 	$sql = "SELECT COLUMN_NAME,COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = :table";
 	$stmt = $pdo->prepare($sql);
@@ -397,43 +325,51 @@ class Scaffold {
 	$this->params = $params;
     }
 
+    /**
+     * Parse code from console to entity and params    
+     */
     private function processCode() {
-
 	$this->entity = ucfirst(strtolower(array_shift($this->code)));
-
 	$params = array();
-
 	foreach ($this->code as $param) {
 	    $param = explode(":", $param);
 	    $name = $param[0];
 	    $temp = explode("=", $param[1]);
 	    $type = $temp[0];
 	    $atribute = isset($temp[1]) ? $temp[1] : null;
-
 	    array_push($params, array("name" => strtolower($name), "type" => strtolower($type), "params" => strtolower($atribute)));
 	}
-
 	$this->params = $params;
+
+	if ($this->module == "") {
+	    $this->pathModule = $this->entity . "Module";
+	} else {
+	    $this->pathModule = $this->module . "/" . $this->entity . "Module";
+	}
     }
 
+    /**
+     * Write to console     
+     * @param string $text what is written on console
+     */
     private function writeConsole($text) {
 	echo $text;
 	echo "\n";
     }
 
+    /**
+     * Read from console     
+     * @return array of arguments from console
+     */
     private function readArgv() {
 	$argv = $_SERVER['argv'];
 	array_shift($argv);
 	return $argv;
     }
 
-    private function readConsole() {
-	$stdin = fopen('php://stdin', 'r');
-	$return = trim(fgets(STDIN));
-	fclose($stdin);
-	return $return;
-    }
-
+    /**
+     * Write help to console        
+     */
     private function help() {
 	$this->writeConsole("--- Welcome in Scaffold for Nette ---");
 	$this->writeConsole("");

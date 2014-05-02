@@ -2,19 +2,140 @@
 
 class TemplateGenerator extends Generator {
 
-    /** @deprecated */
-    private function createDir($entity) {
-	if (!file_exists("app/templates/$entity")) {
-	    mkdir("app/templates/$entity", 0777, true);
+    /**
+     * String - name of current module - ex. CarModule2
+     */
+    private $currentModule;
+
+    /**
+     * String - path to current module - ex. CarModule/CarModule2
+     */
+    private $modulePath;
+
+    /**
+     * String - nette path to module - ex. CarModule:CarModule2
+     */
+    private $modules;
+
+    /**
+     * String - name of module where entity is generated - ex. CarModule
+     */
+    private $module;
+
+    /**
+     * String - name of generated entity - ex. Car
+     */
+    private $entity;
+
+    /**
+     * Two dimensional array  - array of generated entity atributes 
+     */
+    private $atributes;
+
+    /**
+     * Create each template
+     * @param string $module path to module where entity is generated
+     * @param string $entity name of generated entity
+     * @param two dimensional array $atributes array of generated entity atributes
+     * @param string $method name of method in Template Generator - Add,Edit,List,Detail
+     * @return bool 
+     */
+    public function create($module, $entity, $atributes, $method) {
+	$this->currentModule = $this->getCurrentModule($entity);
+	$this->modulePath = $this->getModulePath($module, $this->currentModule);
+	$this->modules = $this->getModules($module, $this->currentModule);
+	$this->module = $module;
+	$this->entity = $entity;
+	$this->atributes = $atributes;
+
+	$method = "create" . $method . "Template";
+	if (method_exists("TemplateGenerator", $method)) {
+	    $return = $this->$method();
+	    return $return;
+	} else {
+	    return FALSE;
 	}
     }
 
-    private function loadHeaderTable($name) {
-	$template = $this->loadTemplate("templates/controls/grid/templateListHeader.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-name]", $name);
-	return $template;
+    /**
+     * Create edit template
+     * @return bool 
+     */
+    private function createEditTemplate() {
+	$template = $this->loadTemplate("templates/templates/edit.latte");
+	$template = $this->replaceTemplateString($template, "[scaffold-form]", strtolower($this->entity) . "Form");
+
+	try {
+	    $this->write($template, "app/$this->modulePath/templates/Edit.edit.latte");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
+	return TRUE;
     }
 
+    /**
+     * Create add template
+     * @return bool 
+     */
+    private function createAddTemplate() {
+	$template = $this->loadTemplate("templates/templates/add.latte");
+	$template = $this->replaceTemplateString($template, "[scaffold-form]", strtolower($this->entity) . "Form");
+
+	try {
+	    $this->write($template, "app/$this->modulePath/templates/Add.add.latte");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
+	return TRUE;
+    }
+
+    /**
+     * Create list template
+     * @return bool 
+     */
+    private function createListTemplate() {
+	$template = $this->loadTemplate("templates/templates/list.latte");
+	$entityList = $this->loadEntityList($this->atributes, $this->entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityList]", $entityList);
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $this->modules);
+
+	try {
+	    $this->write($template, "app/$this->modulePath/templates/List.default.latte");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
+	return TRUE;
+    }
+
+    /**
+     * Create detail template
+     * @return bool 
+     */
+    private function createDetailTemplate() {
+	$template = $this->loadTemplate("templates/templates/detail.latte");
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $this->modules);
+
+	$entityDetail = $this->loadEntityDetail($this->atributes, $this->entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityDetail]", $entityDetail);
+
+	try {
+	    $this->write($template, "app/$this->modulePath/templates/Detail.default.latte");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
+	return TRUE;
+    }
+
+    /**
+     * Load entity list
+     * @param two dimensional array $atributes array of generated entity atributes
+     * @param string $entity name of generated entity
+     * @return string 
+     */
     private function loadEntityList($atributes, $entity) {
 	$template = $this->loadTemplate("templates/controls/grid/templateList.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
@@ -27,7 +148,7 @@ class TemplateGenerator extends Generator {
 
 	$types = "";
 	foreach ($atributes as $param) {
-	    $class = ucfirst(trim($param["type"])) . "TypeGenerator";
+	    $class = ucfirst(trim($param["type"])) . "Generator";
 	    if (class_exists($class)) {
 		$generator = new $class();
 		$types .= $generator->generateGridList($param);
@@ -39,13 +160,30 @@ class TemplateGenerator extends Generator {
 
 	return $template;
     }
+    
+    /**
+     * Load Header of entity name atribute
+     * @param string $name name of atribute for entity
+     * @return string 
+     */
+    private function loadHeaderTable($name) {
+	$template = $this->loadTemplate("templates/controls/grid/templateListHeader.txt");
+	$template = $this->replaceTemplateString($template, "[scaffold-name]", $name);
+	return $template;
+    }
 
+    /**
+     * Load entity detail
+     * @param two dimensional array $atributes array of generated entity atributes
+     * @param string $entity name of generated entity
+     * @return string 
+     */
     private function loadEntityDetail($atributes, $entity) {
 	$template = $this->loadTemplate("templates/controls/grid/templateDetail.txt");
 
 	$detailItems = "";
 	foreach ($atributes as $param) {
-	    $class = ucfirst(trim($param["type"])) . "TypeGenerator";
+	    $class = ucfirst(trim($param["type"])) . "Generator";
 	    if (class_exists($class)) {
 		$generator = new $class();
 		$detailItems .= $generator->generateGridDetail($param);
@@ -56,49 +194,6 @@ class TemplateGenerator extends Generator {
 
 	$template = $this->replaceTemplateString($template, "[scaffold-detailItems]", $detailItems);
 	return $template;
-    }
-
-    public function createTemplateEdit($entity, $module) {
-	$template = $this->loadTemplate("templates/templates/edit.latte");
-	$template = $this->replaceTemplateString($template, "[scaffold-form]", strtolower($entity) . "Form");
-	$this->write($template, "app/$module/templates/Edit.edit.latte");
-	return TRUE;
-    }
-
-    public function createTemplateAdd($entity, $module) {
-	$template = $this->loadTemplate("templates/templates/add.latte");
-	$template = $this->replaceTemplateString($template, "[scaffold-form]", strtolower($entity) . "Form");
-	$this->write($template, "app/$module/templates/Add.add.latte");
-	return TRUE;
-    }
-
-    public function createTemplateList($entity, $atributes, $module) {
-	$currentModule = $this->getCurrentModule($entity);
-	$modules = $this->getModules($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-
-	$template = $this->loadTemplate("templates/templates/list.latte");
-
-	$entityList = $this->loadEntityList($atributes, $entity);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityList]", $entityList);
-	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $modules);
-
-	$this->write($template, "app/$modulePath/templates/List.default.latte");
-	return TRUE;
-    }
-
-    public function createTemplateDetail($entity, $atributes, $module) {
-	$currentModule = $this->getCurrentModule($entity);
-	$modules = $this->getModules($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-
-	$template = $this->loadTemplate("templates/templates/detail.latte");
-	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $modules);
-
-	$entityDetail = $this->loadEntityDetail($atributes, $entity);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityDetail]", $entityDetail);
-	$this->write($template, "app/$modulePath/templates/Detail.default.latte");
-	return TRUE;
     }
 
 }

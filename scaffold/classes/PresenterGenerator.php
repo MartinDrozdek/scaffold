@@ -2,87 +2,170 @@
 
 class PresenterGenerator extends Generator {
 
-    public function createBasePresenter($module, $entity) {
-	$currentModule = $this->getCurrentModule($entity);
-	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
+    /**
+     * String - name of current module - ex. CarModule2
+     */
+    private $currentModule;
+    
+    /**
+     * String - namespace of modules - ex. CarModule\CarModule2
+     */
+    private $moduleNamespace;
+    
+    /**
+     * String - path to current module - ex. CarModule/CarModule2
+     */
+    private $modulePath;
+    
+    /**
+     * String - nette path to module - ex. CarModule:CarModule2
+     */
+    private $modules;
+    
+    /**
+     * String - name of module where entity is generated - ex. CarModule
+     */
+    private $module;
+    
+    /**
+     * String - name of generated entity - ex. Car
+     */
+    private $entity;
 
-	$previousModule = ($module == "") ? "" : $module . "\\";
+    /**
+     * Create each presenter
+     * @param string $module path to module where entity is generated
+     * @param string $entity name of generated entity
+     * @param string $method name of method in Presenter Generator - Base,BaseEntity,Add,Edit,List,Detail
+     * @return bool 
+     */
+    public function create($module, $entity, $method) {
+	$this->currentModule = $this->getCurrentModule($entity);
+	$this->moduleNamespace = $this->getModuleNamespace($module, $this->currentModule);
+	$this->modulePath = $this->getModulePath($module, $this->currentModule);
+	$this->modules = $this->getModules($module, $this->currentModule);
+	$this->module = $module;
+	$this->entity = $entity;
 
+	$method = "create" . $method . "Presenter";
+	if (method_exists("PresenterGenerator", $method)) {
+	    $return = $this->$method();
+	    return $return;
+	} else {
+	    return FALSE;
+	}
+    }
+
+    /**
+     * Create base presenter
+     * @return bool 
+     */
+    private function createBasePresenter() {
+	$previousModule = ($this->module == "") ? "" : $this->module . "\\";
 	$template = $this->loadTemplate("templates/presenters/BasePresenter.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
+	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
 	$template = $this->replaceTemplateString($template, "[scaffold-previousModule]", $previousModule);
 
-	$this->write($template, "app/$modulePath/presenters/BasePresenter.php");
+	try {
+	    $this->write($template, "app/$this->modulePath/presenters/BasePresenter.php");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
 	return TRUE;
     }
 
-    public function createBaseEntityPresenter($module, $entity) {
-	$currentModule = $this->getCurrentModule($entity);
-	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-
+    /**
+     * Create base entity presenter
+     * @return bool 
+     */
+    private function createBaseEntityPresenter() {
 	$template = $this->loadTemplate("templates/presenters/BaseEntityPresenter.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
 
-	$this->write($template, "app/$modulePath/presenters/Base{$entity}Presenter.php");
+	try {
+	    $this->write($template, "app/$this->modulePath/presenters/Base{$this->entity}Presenter.php");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
 	return TRUE;
     }
 
-    public function createAddPresenter($module, $entity) {
-	$currentModule = $this->getCurrentModule($entity);
-	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-	$modules = $this->getModules($module, $currentModule);
-
+    /**
+     * Create add presenter
+     * @return bool 
+     */
+    private function createAddPresenter() {
 	$template = $this->loadTemplate("templates/presenters/AddPresenter.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
-	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $modules);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityNameSmall]", strtolower($entity));
+	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $this->modules);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityNameSmall]", strtolower($this->entity));
 
-	$this->write($template, "app/$modulePath/presenters/AddPresenter.php");
+	try {
+	    $this->write($template, "app/$this->modulePath/presenters/AddPresenter.php");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
 	return TRUE;
     }
 
-    public function createEditPresenter($module, $entity) {
-	$currentModule = $this->getCurrentModule($entity);
-	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-	$modules = $this->getModules($module, $currentModule);
-
+    /**
+     * Create edit presenter
+     * @return bool 
+     */
+    private function createEditPresenter() {
 	$template = $this->loadTemplate("templates/presenters/EditPresenter.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityNameSmall]", strtolower($entity));
-	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $modules);
+	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityNameSmall]", strtolower($this->entity));
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $this->modules);
 
-	$this->write($template, "app/$modulePath/presenters/EditPresenter.php");
+	try {
+	    $this->write($template, "app/$this->modulePath/presenters/EditPresenter.php");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
 	return TRUE;
     }
 
-    public function createListPresenter($module, $entity) {
-	$currentModule = $this->getCurrentModule($entity);
-	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-
+    /**
+     * Create list presenter
+     * @return bool 
+     */
+    private function createListPresenter() {
 	$template = $this->loadTemplate("templates/presenters/ListPresenter.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
-	$this->write($template, "app/$modulePath/presenters/ListPresenter.php");
+	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
+
+	try {
+	    $this->write($template, "app/$this->modulePath/presenters/ListPresenter.php");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
 	return TRUE;
     }
 
-    public function createDetailPresenter($module, $entity) {
-	$currentModule = $this->getCurrentModule($entity);
-	$moduleNamespace = $this->getModuleNamespace($module, $currentModule);
-	$modulePath = $this->getModulePath($module, $currentModule);
-
+    /**
+     * Create detail presenter
+     * @return bool 
+     */
+    private function createDetailPresenter() {
 	$template = $this->loadTemplate("templates/presenters/DetailPresenter.txt");
-	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $moduleNamespace);
-	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $entity);
-	$this->write($template, "app/$modulePath/presenters/DetailPresenter.php");
+	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
+
+	try {
+	    $this->write($template, "app/$this->modulePath/presenters/DetailPresenter.php");
+	} catch (Exception $e) {
+	    echo $e;
+	    return FALSE;
+	}
 	return TRUE;
     }
 

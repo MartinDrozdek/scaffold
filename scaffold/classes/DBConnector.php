@@ -1,37 +1,38 @@
 <?php
 
-class DBConnector {   
-    
-    
+class DBConnector {
+
+    /**
+     * Connect to database     
+     * @return instance of PDO 
+     */
     public function connect() {
-	$connector = $this->connectLocal();
-
+	$connector = $this->connectConfig("app/config/config.local.neon");
 	if ($connector == NULL) {
-	    $connector = $this->connectGlobal();
+	    $connector = $this->connectConfig("app/config/config.neon");
 	}
-	
 	return $connector;
-	
-	/*$this->connectNette();
-	
-	
-	return NULL;*/
     }
-    private function connectNette(){
-	$container = require 'app/bootstrap.php'; 
-	/*$dsn = $container->nette->database->dsn;
-	$user = $container->nette->database->user;
-	$password = $container->nette->database->password;*/
-	
+
+    private function connectNette() {
+	$container = require 'app/bootstrap.php';
+	/* $dsn = $container->nette->database->dsn;
+	  $user = $container->nette->database->user;
+	  $password = $container->nette->database->password; */
+
 	print_r($container->parameters);
-	/*print_r($user);
-	print_r($password);*/
+	/* print_r($user);
+	  print_r($password); */
     }
-    
-    private function connectLocal() {
-	$str = file_get_contents("app/config/config.local.neon");
-	$str = explode("\t\t", $str);
 
+    /**
+     * Connect to database from Nette Config   
+     * @param string $file file where is config 
+     * @return instance of PDO 
+     */
+    private function connectConfig($file) {
+	$str = file_get_contents($file);
+	$str = explode("\t\t", $str);
 	foreach ($str as $value) {
 	    $value = explode(":", $value, 2);
 	    if (trim($value[0]) == "user") {
@@ -44,32 +45,6 @@ class DBConnector {
 		$password = trim($value[1]);
 	    }
 	}
-
-	if ($dsn != "" && $user != "" && $password != "") {
-	    $db = new PDO($dsn, $user, $password);
-	    return $db;
-	} else {
-	    return NULL;
-	}
-    }
-
-    private function connectGlobal() {
-	$str = file_get_contents("app/config/config.neon");
-	$str = explode("\t\t", $str);
-
-	foreach ($str as $value) {
-	    $value = explode(":", $value, 2);
-	    if (trim($value[0]) == "user") {
-		$user = trim($value[1]);
-	    }
-	    if (trim($value[0]) == "dsn") {
-		$dsn = str_replace("'", "", trim($value[1]));
-	    }
-	    if (trim($value[0]) == "password") {
-		$password = trim($value[1]);
-	    }
-	}
-
 	if ($dsn != "" && $user != "" && $password != "") {
 	    $db = new PDO($dsn, $user, $password);
 	    return $db;

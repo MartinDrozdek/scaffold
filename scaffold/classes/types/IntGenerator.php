@@ -1,9 +1,13 @@
 <?php
 
-class FloatTypeGenerator extends TypeGenerator {
+class IntGenerator extends Generator {
 
+    /**
+     * Generate MYSQL for int
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
     public function generateMySQL($param) {
-
 	$size = $this->getSize($param["params"]);
 	$size = ($size == "") ? "(11)" : "($size)";
 
@@ -13,44 +17,49 @@ class FloatTypeGenerator extends TypeGenerator {
 	$default = $this->getDefault($param["params"]);
 	$default = ($default == "") ? "" : "DEFAULT '$default'";
 
-	return "`" . $param['name'] . "` FLOAT$size $null $default";
+	return "`" . $param['name'] . "` INT$size $null $default";
     }
 
-    public function generateForm($param, $isDefault) {
+    /**
+     * Generate form for int
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
+    public function generateForm($param) {
 	$size = $this->getSize($param["params"]);
 	$size = ($size == "") ? "11" : $size;
 
-	$template = $this->loadTemplate("templates/controls/form/float/template.txt");
+	$template = $this->loadTemplate("templates/controls/form/int/template.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-name]", $param['name']);
 	$template = $this->replaceTemplateString($template, "[scaffold-caption]", ucfirst($param['name']));
 	$template = $this->replaceTemplateString($template, "[scaffold-maxlenght]", $size);
 
 	$null = $this->getNull($param["params"]);
 	if ($null == false) {
-	    $required = $this->loadTemplate("templates/controls/form/float/required.txt");
+	    $required = $this->loadTemplate("templates/controls/form/int/required.txt");
 	    $template .= $required;
 	}
-
-	if ($isDefault == TRUE) {
-	    $defaultValue = $this->getDefault($param["params"]);
-	    if ($defaultValue != "") {
-		$default = $this->loadTemplate("templates/controls/form/float/default.txt");
-		$default = $this->replaceTemplateString($default, "[scaffold-value]", $defaultValue);
-		$template .= $default;
-	    }
-	}
-
 	return $template;
     }
 
+    /**
+     * Generate grid list for int
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
     public function generateGridList($param) {
-	$template = $this->loadTemplate("templates/contols/grid/float/list.txt");
+	$template = $this->loadTemplate("templates/controls/grid/int/list.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-name]", $param['name']);
 	return $template;
     }
 
+    /**
+     * Generate grid detail for int
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
     public function generateGridDetail($param) {
-	$template = $this->loadTemplate("templates/controls/grid/float/detail.txt");
+	$template = $this->loadTemplate("templates/controls/grid/int/detail.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-name]", ucfirst($param['name']));
 	$template = $this->replaceTemplateString($template, "[scaffold-nameSmall]", $param['name']);
 	return $template;

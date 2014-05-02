@@ -1,7 +1,12 @@
 <?php
 
-class TextTypeGenerator extends TypeGenerator {
+class TextGenerator extends Generator {
 
+    /**
+     * Generate MYSQL for text
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
     public function generateMySQL($param) {
 	$null = $this->getNull($param["params"]);
 	$null = ($null == true) ? "NULL" : "NOT NULL";
@@ -9,8 +14,12 @@ class TextTypeGenerator extends TypeGenerator {
 	return "`" . $param['name'] . "` TEXT $null";
     }
 
-    public function generateForm($param, $isDefault) {
-
+    /**
+     * Generate form for text
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
+    public function generateForm($param) {
 	$template = $this->loadTemplate("templates/controls/form/text/template.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-name]", $param['name']);
 	$template = $this->replaceTemplateString($template, "[scaffold-caption]", ucfirst($param['name']));
@@ -21,24 +30,25 @@ class TextTypeGenerator extends TypeGenerator {
 	    $template .= $required;
 	}
 
-	if ($isDefault == TRUE) {
-	    $defaultValue = $this->getDefault($param["params"]);
-	    if ($defaultValue != "") {
-		$default = $this->loadTemplate("templates/controls/form/text/default.txt");
-		$default = $this->replaceTemplateString($default, "[scaffold-value]", $defaultValue);
-		$template .= $default;
-	    }
-	}
-
 	return $template;
     }
 
+    /**
+     * Generate grid list for text
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
     public function generateGridList($param) {
 	$template = $this->loadTemplate("templates/controls/grid/text/list.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-name]", $param['name']);
 	return $template;
     }
 
+    /**
+     * Generate grid detail for text
+     * @param array $param atribute of generated entity
+     * @return string 
+     */
     public function generateGridDetail($param) {
 	$template = $this->loadTemplate("templates/controls/grid/text/detail.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-name]", ucfirst($param['name']));
