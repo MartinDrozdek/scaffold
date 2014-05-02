@@ -15,25 +15,16 @@ class EditPresenter extends Base[scaffold-entityName]Presenter{
 	return $form;
     }
 
-    public function onSubmitEdit($form){
-	$id = $this->getParam('id');
-	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
-	$values = $form->getValues();	
-	$[scaffold-entityName]->save($id,$values);
+    public function onSubmitEdit($form){	
+	$values = $form->getValues();
+	$this->[scaffold-entityName]->save($this->[scaffold-entityName]Id, $values);
 	$this->flashMessage('[scaffold-entityName] byl upraven.','success');
-	$this->redirect(':[scaffold-Modules]:Detail:default',array('id' => $id));
+	$this->redirect(':[scaffold-Modules]:Detail:default', array('[scaffold-entityName]Id' => $this->[scaffold-entityName]Id));
     }
 
-    public function actionEdit($id){
-	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
-	try{
-	    $values = $[scaffold-entityName]->find($id);    
-	} catch(ModelException $e){
-	    $this->flashMessage("[scaffold-entityName] s id $id nebyl nalezen.",'error');
-	    $this->redirect('default');
-	}
+    public function actionEdit($[scaffold-entityName]Id){
 	$form = $this->getComponent('[scaffold-entityNameSmall]Form');
-	$form->setDefaults($values);
+	$form->setDefaults($this->[scaffold-entityName]Values);
 	$form->onSubmit[] = callback($this, 'onSubmitEdit');
     }
 }

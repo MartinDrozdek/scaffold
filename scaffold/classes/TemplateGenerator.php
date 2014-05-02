@@ -117,6 +117,7 @@ class TemplateGenerator extends Generator {
     private function createDetailTemplate() {
 	$template = $this->loadTemplate("templates/templates/detail.latte");
 	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $this->modules);
+	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
 
 	$entityDetail = $this->loadEntityDetail($this->atributes, $this->entity);
 	$template = $this->replaceTemplateString($template, "[scaffold-entityDetail]", $entityDetail);
@@ -160,7 +161,7 @@ class TemplateGenerator extends Generator {
 
 	return $template;
     }
-    
+
     /**
      * Load Header of entity name atribute
      * @param string $name name of atribute for entity

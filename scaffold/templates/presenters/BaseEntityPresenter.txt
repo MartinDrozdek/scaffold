@@ -12,6 +12,8 @@ class Base[scaffold-entityName]Presenter extends BasePresenter{
     
     public $[scaffold-entityName];
 
+    public $[scaffold-entityName]Values;
+
     public function __construct(Nette\Database\Context $database) {
 	$this->database = $database;
 	//$container = new Nette\DI\Container;
@@ -20,10 +22,20 @@ class Base[scaffold-entityName]Presenter extends BasePresenter{
 
     public function startup() {
 	parent::startup();
+	$this->[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
+	if ($this->[scaffold-entityName]Id != "") {
+	    try {
+		$this->[scaffold-entityName]Values = $this->[scaffold-entityName]->find($this->[scaffold-entityName]Id);
+	    } catch (ModelException $exc) {
+		$this->flashMessage("[scaffold-entityName] s id $this->[scaffold-entityName]Id nebyl nalezen.", 'error');
+		$this->redirect(':[scaffold-Modules]:List:');
+	    }
+	}
     }
     
     public function beforeRender() {
 	parent::beforeRender();
+	$this->template->item = $this->[scaffold-entityName]Values;
     }
 
     

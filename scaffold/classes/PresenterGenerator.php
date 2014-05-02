@@ -83,6 +83,7 @@ class PresenterGenerator extends Generator {
 	$template = $this->loadTemplate("templates/presenters/BaseEntityPresenter.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
 	$template = $this->replaceTemplateString($template, "[scaffold-entityName]", $this->entity);
+	$template = $this->replaceTemplateString($template, "[scaffold-Modules]", $this->modules);
 
 	try {
 	    $this->write($template, "app/$this->modulePath/presenters/Base{$this->entity}Presenter.php");

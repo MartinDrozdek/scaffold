@@ -16,11 +16,10 @@ class AddPresenter extends Base[scaffold-entityName]Presenter{
     }
 
     public function onSubmitAdd($form){
-	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
 	$values = $form->getValues();	
-	$id = $[scaffold-entityName]->save(NULL,$values);
+	$id = $this->[scaffold-entityName]->save(NULL,$values);
 	$this->flashMessage('[scaffold-entityName] byl přidán.','success');
-	$this->redirect(':[scaffold-Modules]:Detail:default',array('id' => $id));
+	$this->redirect(':[scaffold-Modules]:Detail:default',array('[scaffold-entityName]Id' => $id));
     }
 
     public function actionAdd(){
@@ -29,8 +28,7 @@ class AddPresenter extends Base[scaffold-entityName]Presenter{
     }
     
     public function actionDelete($id){
-	$[scaffold-entityName] = new Model\[scaffold-entityName]($this->database);
-	$[scaffold-entityName]->delete($id);
+	$this->[scaffold-entityName]->delete($id);
 	$this->flashMessage('[scaffold-entityName] byl smazán.','success');
 	$this->redirect(':[scaffold-Modules]:List:');
     }

@@ -6,12 +6,8 @@ use Nette, App\Model;
 
 class DetailPresenter extends Base[scaffold-entityName]Presenter{
 
-    public function renderDefault($id){
-	$item = $this->database->table('[scaffold-entityName]')->get($id);
-	if (!$item) {
-	    $this->error('Stránka nebyla nalezena');
-	};
-	$this->template->item = $item;
+    public function renderDefault($[scaffold-entityName]Id){
+	
     }
 }
 ?>
