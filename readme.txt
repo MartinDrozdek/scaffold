@@ -1,4 +1,3 @@
-Scaffold system for Nette
+Scaffold system for Nette Framework
 -------------------------
 
-Lorem Ipsum
