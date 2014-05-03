@@ -47,6 +47,11 @@ class Scaffold {
     private $pathModule;
 
     /**
+     * String - namespace of modules - ex. CarModule/CarModule2
+     */
+    private $namespaceModule;
+
+    /**
      * 	Construct
      */
     function __construct() {
@@ -167,6 +172,9 @@ class Scaffold {
 		$this->writeConsole("\t Generate entity: $this->entity");
 	    }
 	}
+	
+	$this->writeConsole("\n!!! WRITE THIS TO CONFIG.NEON INTO SERVICES:\n - \App\\{$this->namespaceModule}\\{$this->entity}FormFactory\n");	
+	
     }
 
     /**
@@ -343,8 +351,10 @@ class Scaffold {
 
 	if ($this->module == "") {
 	    $this->pathModule = $this->entity . "Module";
+	    $this->namespaceModule = $this->entity . "Module";
 	} else {
 	    $this->pathModule = $this->module . "/" . $this->entity . "Module";
+	    $this->namespaceModule = $this->module . "\\" . $this->entity . "Module";
 	}
     }
 
