@@ -4,10 +4,16 @@ namespace App\[scaffold-namespace]\Presenters;
 
 use Nette, App\Model;
 
-class ListPresenter extends Base[scaffold-entityName]Presenter{
+class ListPresenter extends BasePresenter{
+
+  private $database;
+
+  public function __construct(Nette\Database\Context $database) {
+	   $this->database = $database;
+  }
 
     public function renderDefault(){    
-	$this->template->items = $this->database->table('[scaffold-entityName]');
+	   $this->template->items = $this->database->table('[scaffold-entityName]');
     }
 }
 ?>

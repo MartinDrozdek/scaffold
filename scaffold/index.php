@@ -315,6 +315,7 @@ class Scaffold {
 		$type = $typeColumn[0];
 		$type = ($type == "tinyint") ? "bool" : $type;
 		$atribute = "";
+    $typeColumn[1] = (isset($typeColumn[1])) ? $typeColumn[1] : null;
 		$size = str_replace(")", "", $typeColumn[1]);
 		if ($size != "") {
 		    $atribute .= "size-$size";
