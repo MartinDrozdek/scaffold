@@ -16,8 +16,6 @@ class Base[scaffold-entityName]Presenter extends BasePresenter{
 
     public function __construct(Nette\Database\Context $database) {
 	$this->database = $database;
-	//$container = new Nette\DI\Container;
-	//$container->addService('[scaffold-entityName]FormFactory', function() {return new \App\[scaffold-namespace]\[scaffold-entityName]FormFactory();});
     }
 
     public function startup() {
