@@ -56,9 +56,14 @@ class Scaffold {
      */
     function __construct() {
 	$parameters = $this->readArgv();
+  
+  $parameters[0] = (isset($parameters[0]))? $parameters[0] : null;
+  if($parameters[0] == null){
+    $this->writeConsole("!!! Don't have order to execute.");
+  }
 	if ($parameters[0] == "?") {
 	    $this->help();
-	}
+	}  
 	if ($parameters[0] == "entity") {
 	    array_shift($parameters);
 
@@ -69,7 +74,7 @@ class Scaffold {
 	    }
 
 	    if (count($parameters) < 2) {
-		$this->writeConsole("\t Don't required params.");
+		$this->writeConsole("!!! Don't have required params.");
 		return;
 	    }
 	    $this->code = $parameters;
@@ -86,7 +91,7 @@ class Scaffold {
 	    }
 
 	    if (count($parameters) < 1) {
-		$this->writeConsole("\t Don't required params.");
+		$this->writeConsole("!!! Don't have required params.");
 		return;
 	    }
 	    $this->code = $parameters;
@@ -354,8 +359,10 @@ class Scaffold {
 	    $this->pathModule = $this->entity . "Module";
 	    $this->namespaceModule = $this->entity . "Module";
 	} else {
-	    $this->pathModule = $this->module . "/" . $this->entity . "Module";
-	    $this->namespaceModule = $this->module . "\\" . $this->entity . "Module";
+      $this->pathModule = $this->module . "/" . $this->entity . "Module";
+      $module = $this->module;
+      $module = str_replace("/", "\\", $module);
+	    $this->namespaceModule = $module . "\\" . $this->entity . "Module";
 	}
     }
 

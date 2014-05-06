@@ -28,6 +28,7 @@ class Generator {
      * @return string 
      */
     protected function getModuleNamespace($previousModule, $currentModule) {
+    $previousModule = $this->replaceTemplateString($previousModule, "/", "\\");
 	$moduleNamespace = ($previousModule == "") ? $currentModule : $previousModule . "\\" . $currentModule;
 	return $moduleNamespace;
     }

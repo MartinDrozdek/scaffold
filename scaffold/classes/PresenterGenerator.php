@@ -61,7 +61,8 @@ class PresenterGenerator extends Generator {
      * @return bool 
      */
     private function createBasePresenter() {
-	$previousModule = ($this->module == "") ? "" : $this->module . "\\";
+    $module = $this->replaceTemplateString($this->module, "/", "\\");
+	$previousModule = ($module == "") ? "" : $module . "\\";
 	$template = $this->loadTemplate("templates/presenters/BasePresenter.txt");
 	$template = $this->replaceTemplateString($template, "[scaffold-namespace]", $this->moduleNamespace);
 	$template = $this->replaceTemplateString($template, "[scaffold-previousModule]", $previousModule);
